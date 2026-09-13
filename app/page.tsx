@@ -283,7 +283,7 @@ export default function ChatPage() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Ask anything about your documents…"
+              placeholder="Ask anything…"
               rows={1}
               className="max-h-[200px] flex-1 resize-none rounded-xl border border-zinc-300 px-4 py-3 text-sm outline-none transition-colors focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
             />
@@ -307,7 +307,6 @@ export default function ChatPage() {
             )}
           </div>
           <p className="mx-auto mt-2 max-w-3xl text-center text-[10px] text-zinc-400">
-            Answers are grounded in your documents and include citations.
             Enter to send · Shift+Enter for a new line.
           </p>
         </div>
