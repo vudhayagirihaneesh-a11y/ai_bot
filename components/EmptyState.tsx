@@ -16,23 +16,11 @@ export function EmptyState({ onPick }: { onPick: (prompt: string) => void }) {
         <Sparkles className="h-7 w-7 text-brand-600" />
       </div>
       <h2 className="mt-4 text-lg font-semibold">
-        Ask your knowledge base anything
+        Ask Maths AI anything
       </h2>
       <p className="mt-1 max-w-md text-sm text-zinc-500">
-        Retrieval-augmented answers with inline citations, powered fully
-        locally by Ollama. Nothing leaves your machine.
+        I can answer your questions based on the mathematics knowledge base.
       </p>
-      <div className="mt-6 grid w-full max-w-lg grid-cols-1 gap-2 sm:grid-cols-2">
-        {EXAMPLE_PROMPTS.map((prompt) => (
-          <button
-            key={prompt}
-            onClick={() => onPick(prompt)}
-            className="rounded-xl border border-zinc-200 bg-white px-4 py-3 text-left text-xs text-zinc-600 transition-colors hover:border-brand-300 hover:bg-brand-50"
-          >
-            {prompt}
-          </button>
-        ))}
-      </div>
     </div>
   );
 }
