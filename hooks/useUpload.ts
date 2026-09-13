@@ -52,7 +52,7 @@ export function useUpload(onFinished?: (doc: DocumentInfo) => void) {
         const { createClient } = await import("@supabase/supabase-js");
         const supabase = createClient(
           process.env.NEXT_PUBLIC_SUPABASE_URL || "", 
-          process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || ""
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
         );
         
         // Use a random ID to prevent collisions
