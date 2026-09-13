@@ -227,13 +227,12 @@ export default function ChatPage() {
           <div className="flex items-center gap-2">
             <Bot className="h-5 w-5 text-brand-600" />
             <h1 className="text-sm font-semibold">
-              Maths AI — Local Knowledge Assistant
+              Maths AI
             </h1>
           </div>
           <div className="ml-auto flex items-center gap-1.5 rounded-full bg-zinc-100 px-3 py-1 text-[11px] text-zinc-500">
             <Database className="h-3 w-3" />
-            {documents.length} docs ·{" "}
-            {documents.reduce((sum, d) => sum + d.chunks, 0)} chunks
+            Connected
           </div>
         </header>
 

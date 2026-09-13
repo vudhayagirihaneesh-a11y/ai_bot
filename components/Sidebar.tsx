@@ -45,33 +45,11 @@ interface Health {
 
 export function Sidebar(props: SidebarProps) {
   const [uploadOpen, setUploadOpen] = useState(false);
-  const [health, setHealth] = useState<Health | null>(null);
-
-  // Poll health every 30s (re-poll when the document list changes)
-  useEffect(() => {
-    let cancelled = false;
-    const poll = async () => {
-      try {
-        const res = await fetch("/api/health");
-        if (res.ok && !cancelled) setHealth(await res.json());
-      } catch {
-        /* offline */
-      }
-    };
-    void poll();
-    const timer = setInterval(poll, 30_000);
-    return () => {
-      cancelled = true;
-      clearInterval(timer);
-    };
-  }, [props.documents.length]);
+  // Health polling removed for production
 
   if (!props.open) return null;
 
-  const healthy =
-    health?.ollama.alive === true &&
-    health?.ollama.chatModelReady === true &&
-    health?.ollama.embedModelReady === true;
+
 
   const deleteDocument = async (docId: string) => {
     try {
@@ -112,33 +90,6 @@ export function Sidebar(props: SidebarProps) {
             <Plus className="h-4 w-4" />
             New chat
           </button>
-          <div
-            className={cn(
-              "mt-2 flex items-center gap-2 rounded-lg border px-3 py-2 text-[11px]",
-              health == null
-                ? "border-zinc-200 bg-zinc-50 text-zinc-500"
-                : healthy
-                  ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                  : "border-amber-200 bg-amber-50 text-amber-700"
-            )}
-          >
-            <Activity className="h-3.5 w-3.5 shrink-0" />
-            {health == null ? (
-              <span>Checking Ollama…</span>
-            ) : healthy ? (
-              <span className="truncate">
-                Ollama ready · {health.ollama.chatModel}
-              </span>
-            ) : (
-              <span className="truncate">
-                {!health.ollama.alive
-                  ? "Ollama offline — check server connection"
-                  : !health.ollama.chatModelReady
-                    ? "Chat model missing"
-                    : "Embed model missing"}
-              </span>
-            )}
-          </div>
         </div>
 
         <ConversationList
@@ -148,18 +99,7 @@ export function Sidebar(props: SidebarProps) {
           onDelete={props.onDelete}
         />
 
-        <KnowledgeBaseSection
-          documents={props.documents}
-          onUploadClick={() => setUploadOpen(true)}
-          onDeleteDocument={deleteDocument}
-        />
       </aside>
-
-      <UploadModal
-        open={uploadOpen}
-        onClose={() => setUploadOpen(false)}
-        onDocumentAdded={props.onDocumentAdded}
-      />
     </>
   );
 }
