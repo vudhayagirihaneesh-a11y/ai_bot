@@ -14,8 +14,8 @@ function num(value: string | undefined, fallback: number): number {
   return Number.isFinite(n) ? n : fallback;
 }
 
-/** True when running inside a Vercel serverless function. */
-export const isVercel = !!process.env.VERCEL;
+/** True when running in production or inside a Vercel serverless function. */
+export const isVercel = process.env.NODE_ENV === "production" || !!process.env.VERCEL;
 
 export const env = {
   ollama: {
