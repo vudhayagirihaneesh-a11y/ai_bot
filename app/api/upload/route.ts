@@ -73,11 +73,7 @@ export async function POST(req: Request): Promise<Response> {
       try {
         send({ type: "stage", stage: "validating" });
 
-        // Persist the original file for traceability
-        await fs.mkdir(uploadDir, { recursive: true });
-        const storedPath = path.join(uploadDir, `${uid()}_${validation.sanitizedName}`);
         const bytes = await file.arrayBuffer();
-        await fs.writeFile(storedPath, Buffer.from(bytes));
 
         const result = await ingestDocument({
           file: new File([bytes], validation.sanitizedName ?? file.name, {

@@ -59,15 +59,23 @@ export async function ingestDocument(
     buf = await fs.readFile(input.filePath);
     name = path.basename(input.filePath);
     size = buf.byteLength;
-    // Copy source file into the upload dir for traceability
-    await fs.mkdir(uploadDir, { recursive: true });
-    const sanitized = name.replace(/[^\w.\-() ]+/g, "_");
-    storedPath = path.join(uploadDir, sanitized);
-    if (path.resolve(storedPath) !== path.resolve(input.filePath)) {
-      await fs.writeFile(storedPath, buf);
-    }
   } else {
     throw new Error("Either file or filePath is required");
+  }
+
+  // Upload to Supabase Storage
+  const { createClient } = await import("@supabase/supabase-js");
+  const supabase = createClient(env.supabase.url, env.supabase.anonKey);
+  const sanitized = name.replace(/[^\w.\-() ]+/g, "_");
+  const storagePath = `${uid()}_${sanitized}`;
+  
+  onProgress({ stage: "parsing", message: `Uploading ${name}` });
+  const { error: uploadError } = await supabase.storage
+    .from("documents")
+    .upload(storagePath, buf, { contentType: input.file?.type || "application/octet-stream" });
+    
+  if (uploadError) {
+    throw new Error("Failed to upload to Supabase: " + uploadError.message);
   }
 
   // ── 2. Parse ────────────────────────────────────────────────────────────
@@ -128,47 +136,44 @@ export async function ingestDocument(
     pages: pageCount,
     createdAt: Date.now(),
   };
-  addDocument(doc, embedded, dimension);
-  persistNow();
+  await addDocument(doc, embedded, dimension);
 
   onProgress({ stage: "saving", progress: 1, message: "Done" });
   return { document: { ...doc, chunks: embedded.length } };
 }
 
 export async function deleteDocument(docId: string): Promise<boolean> {
-  // Look up the doc so we can delete its stored source file
-  const doc = listDocuments().find((d) => d.id === docId);
+  const docs = await listDocuments();
+  const doc = docs.find((d) => d.id === docId);
   if (!doc) return false;
-  const ok = removeDocument(docId);
+  
+  const ok = await removeDocument(docId);
   if (ok) {
-    persistNow();
-    try {
-      const sanitized = doc.name.replace(/[^\w.\-() ]+/g, "_");
-      await fs.rm(path.join(uploadDir, sanitized), { force: true });
-      // Web uploads are stored as <uuid>_<name> — sweep those copies too.
-      try {
-        const entries = await fs.readdir(uploadDir);
-        await Promise.all(
-          entries
-            .filter((e) => e.endsWith(`_${sanitized}`))
-            .map((e) => fs.rm(path.join(uploadDir, e), { force: true }))
-        );
-      } catch {
-        /* uploads dir may not exist — nothing to sweep */
+    // Delete all files in storage bucket that contain the sanitized name
+    const { createClient } = await import("@supabase/supabase-js");
+    const supabase = createClient(env.supabase.url, env.supabase.anonKey);
+    const sanitized = doc.name.replace(/[^\w.\-() ]+/g, "_");
+    
+    const { data: files } = await supabase.storage.from("documents").list();
+    if (files) {
+      const filesToDelete = files.filter(f => f.name.endsWith(`_${sanitized}`)).map(f => f.name);
+      if (filesToDelete.length > 0) {
+        await supabase.storage.from("documents").remove(filesToDelete);
       }
-    } catch {
-      /* source file may not exist (CLI ingest from original path) */
     }
   }
   return ok;
 }
 
 export async function resetKnowledgeBase(): Promise<void> {
-  clearIndex();
-  try {
-    await fs.rm(uploadDir, { recursive: true, force: true });
-  } catch {
-    /* ignore */
+  await clearIndex();
+  
+  const { createClient } = await import("@supabase/supabase-js");
+  const supabase = createClient(env.supabase.url, env.supabase.anonKey);
+  
+  const { data: files } = await supabase.storage.from("documents").list();
+  if (files && files.length > 0) {
+    await supabase.storage.from("documents").remove(files.map(f => f.name));
   }
 }
 

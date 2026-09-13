@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 /** GET /api/documents — list knowledge base documents with chunk counts. */
 export async function GET(): Promise<Response> {
   return Response.json(
-    { documents: listDocuments() },
+    { documents: await listDocuments() },
     { headers: { "Cache-Control": "no-store" } }
   );
 }
@@ -18,24 +18,22 @@ export async function DELETE(req: Request): Promise<Response> {
   const unauthorized = checkApiKey(req);
   if (unauthorized) return unauthorized;
 
-  const limited = enforceRateLimit(req, "upload");
-  if (limited) return limited;
-
-  const docId = new URL(req.url).searchParams.get("id");
-  if (!docId) {
+  const url = new URL(req.url);
+  const id = url.searchParams.get("id");
+  if (!id) {
     return Response.json(
-      { error: "Query parameter 'id' is required." },
+      { error: "Missing id parameter" },
       { status: 400 }
     );
   }
 
-  const ok = await deleteDocument(docId);
+  const ok = await deleteDocument(id);
   if (!ok) {
     return Response.json(
-      { error: `Document ${docId} not found.` },
+      { error: `Document ${id} not found.` },
       { status: 404 }
     );
   }
 
-  return Response.json({ deleted: docId });
+  return Response.json({ deleted: id });
 }

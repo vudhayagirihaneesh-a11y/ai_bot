@@ -54,6 +54,10 @@ export const env = {
   security: {
     apiKey: process.env.API_KEY || "",
   },
+  supabase: {
+    url: process.env.SUPABASE_URL || "",
+    anonKey: process.env.SUPABASE_ANON_KEY || "",
+  },
   /**
    * Restricted web-search fallback: consulted ONLY when the knowledge
    * base has no relevant chunks. Disable with WEB_SEARCH_ENABLED=false.
