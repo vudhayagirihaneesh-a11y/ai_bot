@@ -45,13 +45,40 @@ export function useUpload(onFinished?: (doc: DocumentInfo) => void) {
       ]);
       setIsUploading(true);
 
-      const body = new FormData();
-      body.append("file", file);
-
       try {
+        // 1. Upload to Supabase directly from browser
+        patchUpload(file, { stage: "validating", message: "Uploading..." });
+        
+        const { createClient } = await import("@supabase/supabase-js");
+        const supabase = createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL || "", 
+          process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || ""
+        );
+        
+        // Use a random ID to prevent collisions
+        const randomId = Math.random().toString(36).substring(2, 9);
+        const sanitized = file.name.replace(/[^\w.\-() ]+/g, "_");
+        const storagePath = `${randomId}_${sanitized}`;
+        
+        const { error: uploadError } = await supabase.storage
+          .from("documents")
+          .upload(storagePath, file);
+          
+        if (uploadError) {
+          throw new Error("Supabase upload failed: " + uploadError.message);
+        }
+
+        // 2. Tell backend to process it via SSE endpoint
+        patchUpload(file, { stage: "parsing", message: "Processing..." });
         const res = await fetch("/api/upload", {
           method: "POST",
-          body,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ 
+            fileName: file.name, 
+            storagePath, 
+            mimeType: file.type,
+            size: file.size
+          }),
         });
 
         // Non-2xx JSON error (validation, rate limit, auth)

@@ -28,10 +28,14 @@ export interface IngestResult {
 }
 
 export interface IngestInput {
-  /** Uploaded file object (web) */
+  /** Uploaded file object (web fallback) */
   file?: File;
   /** Or a file already saved on disk (CLI) */
   filePath?: string;
+  /** Or a file already saved in Supabase (web primary) */
+  storagePath?: string;
+  fileName?: string;
+  size?: number;
   docId?: string;
   onProgress?: (e: {
     stage: "parsing" | "chunking" | "embedding" | "saving";
@@ -49,33 +53,37 @@ export async function ingestDocument(
   let buf: Buffer;
   let name: string;
   let size: number;
-  let storedPath: string | null = null;
 
-  if (input.file) {
+  if (input.storagePath) {
+    name = input.fileName || "document";
+    size = input.size || 0;
+    onProgress({ stage: "parsing", message: `Downloading ${name} from cloud` });
+    
+    const { createClient } = await import("@supabase/supabase-js");
+    const supabase = createClient(env.supabase.url, env.supabase.anonKey);
+    const { data, error } = await supabase.storage.from("documents").download(input.storagePath);
+    
+    if (error || !data) {
+      throw new Error("Failed to download file from Supabase: " + (error?.message || "Unknown error"));
+    }
+    
+    buf = Buffer.from(await data.arrayBuffer());
+  } else if (input.file) {
     buf = Buffer.from(await input.file.arrayBuffer());
     name = input.file.name;
     size = input.file.size;
+    // Upload it so it exists (legacy path)
+    const { createClient } = await import("@supabase/supabase-js");
+    const supabase = createClient(env.supabase.url, env.supabase.anonKey);
+    const sanitized = name.replace(/[^\w.\-() ]+/g, "_");
+    const storagePath = `${uid()}_${sanitized}`;
+    await supabase.storage.from("documents").upload(storagePath, buf);
   } else if (input.filePath) {
     buf = await fs.readFile(input.filePath);
     name = path.basename(input.filePath);
     size = buf.byteLength;
   } else {
-    throw new Error("Either file or filePath is required");
-  }
-
-  // Upload to Supabase Storage
-  const { createClient } = await import("@supabase/supabase-js");
-  const supabase = createClient(env.supabase.url, env.supabase.anonKey);
-  const sanitized = name.replace(/[^\w.\-() ]+/g, "_");
-  const storagePath = `${uid()}_${sanitized}`;
-  
-  onProgress({ stage: "parsing", message: `Uploading ${name}` });
-  const { error: uploadError } = await supabase.storage
-    .from("documents")
-    .upload(storagePath, buf, { contentType: input.file?.type || "application/octet-stream" });
-    
-  if (uploadError) {
-    throw new Error("Failed to upload to Supabase: " + uploadError.message);
+    throw new Error("Either storagePath, file or filePath is required");
   }
 
   // ── 2. Parse ────────────────────────────────────────────────────────────

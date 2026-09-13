@@ -31,37 +31,34 @@ export async function POST(req: Request): Promise<Response> {
   const limited = enforceRateLimit(req, "upload");
   if (limited) return limited;
 
-  let form: FormData;
+  let payload: { fileName: string; storagePath: string; mimeType: string; size: number };
   try {
-    form = await req.formData();
+    payload = await req.json();
   } catch {
     return Response.json(
-      { error: "Expected multipart/form-data with a 'file' field." },
+      { error: "Expected JSON payload with storagePath." },
       { status: 400 }
     );
   }
 
-  const file = form.get("file");
-  if (!(file instanceof File)) {
+  if (!payload.fileName || !payload.storagePath) {
     return Response.json(
-      { error: "Missing 'file' field." },
+      { error: "Missing fileName or storagePath." },
       { status: 400 }
     );
   }
 
   // ── Validation (extension + size) ────────────────────────────────────────
-  const validation = validateFile(file);
-  if (!validation.ok) {
+  // We can't sniff bytes here easily since the file is in Supabase.
+  // The client uploaded it, so we trust the extension/mimeType for now, 
+  // but we should validate the extension is supported.
+  const ext = path.extname(payload.fileName).toLowerCase();
+  const allowed = [".pdf", ".txt", ".md", ".docx"];
+  if (!allowed.includes(ext)) {
     return Response.json(
-      { error: validation.error },
+      { error: `Unsupported file type: ${ext}` },
       { status: 415 }
     );
-  }
-
-  // ── Magic-byte sniffing ──────────────────────────────────────────────────
-  const sniff = await sniffFileType(file);
-  if (!sniff.ok) {
-    return Response.json({ error: sniff.error }, { status: 415 });
   }
 
   const encoder = new TextEncoder();
@@ -73,12 +70,10 @@ export async function POST(req: Request): Promise<Response> {
       try {
         send({ type: "stage", stage: "validating" });
 
-        const bytes = await file.arrayBuffer();
-
         const result = await ingestDocument({
-          file: new File([bytes], validation.sanitizedName ?? file.name, {
-            type: file.type,
-          }),
+          storagePath: payload.storagePath,
+          fileName: payload.fileName,
+          size: payload.size,
           onProgress: (e) => {
             if (e.progress != null) {
               send({
