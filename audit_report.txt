@@ -1,0 +1,30 @@
+﻿PASS S1-files :: 38/38 present
+PASS S2-branding :: Maths AI in layout/page/sidebar/prompt/README
+PASS S3-no-hr-brand :: leftover HR-brand matches in source: 0
+PASS S4-chunker :: recursive splitter + CHUNK_SIZE_CHARS/CHUNK_OVERLAP_CHARS in lib/env.ts
+PASS S5-retrieval :: cosine similarity + search + rerank present; metadata docId/page stored
+PASS S6-sse :: chat SSE=True, upload SSE=True, no-websockets=True
+PASS S7-frontend :: SSE stream reader=True, markdown+highlight=True, lucide icons=True
+PASS S8-ux :: citations=True, upload modal+progress=True, localStorage history=True
+PASS S9-safeguards :: fallback+ratelimit=True, API key=True, .env.example=True
+PASS S10-web-gate :: score gate=True, kill-switch=True, SSRF+timeouts=True, caps=True
+PASS S11-no-topic-gate :: topicGate.ts removed=True, no refs in route=True
+PASS L1-health :: ollama alive, chat=llama3.2:3b [True], embed=nomic-embed-text [True]
+PASS L2-index :: index: 2 docs, 2153 chunks, dim=768
+PASS L3-docs :: documents: math_ai_master_system.txt[5]
+Kenneth H Rosen.pdf[2148]
+PASS L4-kb :: stages=[searching->generating] toks=290 srcs=[document:Kenneth H Rosen.pdf | document:Kenneth H Rosen.pdf | document:Kenneth H Rosen.pdf | document:Kenneth H Rosen.pdf | document:Kenneth H Rosen.pdf]
+----- L4 answer excerpt: According to the provided context passages, the Rosen textbook discusses graph coloring and the chromatic number as follows:
+
+* The chromatic number of a graph is the least number of colors needed for a coloring of the g
+PASS L5-web :: stages=[searching->searching_web->generating] toks=42 srcs=[web:Paris win Champions League: Meet the 2025/26 victors - UEFA.com | web:2025 UEFA Champions League final - Wikipedia | web:Who won the UEFA Champions League final 2025? How PSG made history with ... | web:PSG vs Inter Milan: 2025 UEFA Champions League Final]
+----- L5 answer excerpt: According to Context [2], the winner of the UEFA Champions League in 2025 was Paris Saint-Germain, and they won the match against Inter Milan with a final score of 5–0.
+PASS L6-off :: toks=143 refused_or_short=True
+----- L6 answer excerpt: To determine if the given string is a valid decimal number, we need to check if it meets the rules defined in [1].
+
+According to [1], a decimal number consists of a sign (+ or -), followed by one or more digits (0-9), an
+=== static+live done :: 08:45:23 ===
+PASS L7-upload :: events=[validating->parsing->chunking->progress->progress->saving->progress] progressEvents=3 doc=audit_upload_probe.txt chunks=1
+PASS L8-delete :: DELETE /api/documents -> 200
+PASS L9-tsc :: tsc exit=0
+=== RESULT: 20 PASS / 0 FAIL ===

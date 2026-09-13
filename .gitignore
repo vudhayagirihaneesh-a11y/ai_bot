@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Next.js build output
+.next/
+out/
+next-env.d.ts
+
+# Env files (keep .env.example)
+.env
+.env.local
+.env*.local
+
+# Local data: vector index, uploaded files, runtime logs
+data/
+*.log
+pulls_done.marker
+
+# Misc
+.DS_Store
+*.pem
+npm-debug.log*
+.env_check.txt
+listing.txt

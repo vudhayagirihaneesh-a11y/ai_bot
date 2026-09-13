@@ -1,0 +1,64 @@
+=================================================================
+COMMON GREETINGS AND CONVERSATIONAL WORDS
+=================================================================
+This file contains a collection of basic greetings, farewells, 
+and common conversational words often used to train chatbots 
+for natural dialogue handling.
+
+[GREETINGS]
+Hi
+Hello
+Hey
+Good morning
+Good afternoon
+Good evening
+Greetings
+Howdy
+What's up?
+How are you?
+Nice to meet you
+
+[FAREWELLS]
+Bye
+Goodbye
+See you later
+Take care
+Have a good day
+Catch you later
+Farewell
+Good night
+
+[POLITE EXPRESSIONS]
+Please
+Thank you
+Thanks
+You're welcome
+No problem
+Excuse me
+Sorry
+My apologies
+Pardon me
+
+[AFFIRMATIONS & NEGATIONS]
+Yes
+Yeah
+Yep
+Sure
+Okay
+Absolutely
+No
+Nope
+Not really
+Never
+
+[CONVERSATIONAL FILLERS]
+Well...
+Hmm...
+So...
+Actually...
+Basically...
+Right
+I see
+Got it
+Make sense
+=================================================================

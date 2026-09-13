@@ -1,0 +1,88 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* highlight.js theme (github-dark, scoped to .hljs so it only affects code blocks) */
+@import "highlight.js/styles/github-dark.css";
+
+@theme {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo,
+    Consolas, monospace;
+  --color-brand-50: oklch(0.968 0.015 250);
+  --color-brand-100: oklch(0.93 0.035 250);
+  --color-brand-200: oklch(0.87 0.06 250);
+  --color-brand-300: oklch(0.79 0.09 250);
+  --color-brand-400: oklch(0.69 0.13 250);
+  --color-brand-500: oklch(0.6 0.16 250);
+  --color-brand-600: oklch(0.52 0.17 250);
+  --color-brand-700: oklch(0.44 0.15 250);
+  --color-brand-800: oklch(0.37 0.12 250);
+  --color-brand-900: oklch(0.3 0.09 250);
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  @apply bg-zinc-50 text-zinc-900 antialiased;
+}
+
+/* ── Streaming caret for in-flight assistant answers ────────────────────── */
+@keyframes caret-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.streaming-caret::after {
+  content: "▍";
+  margin-left: 2px;
+  animation: caret-blink 1s steps(1) infinite;
+  @apply text-brand-500;
+}
+
+/* ── Markdown content spacing inside chat bubbles ──────────────────────── */
+.message-markdown > :first-child {
+  margin-top: 0;
+}
+.message-markdown > :last-child {
+  margin-bottom: 0;
+}
+
+/* Code blocks: rounded, padded, horizontally scrollable */
+.message-markdown pre {
+  @apply rounded-lg bg-zinc-900 p-4 overflow-x-auto text-sm leading-relaxed;
+}
+
+.message-markdown pre code {
+  @apply bg-transparent p-0 text-zinc-100;
+}
+
+/* Inline code in chat bubbles: suppress prose-generated backtick/quote
+   marks (::before/::after) and use neutral dark text instead of pink */
+.message-markdown code:not(pre code)::before,
+.message-markdown code:not(pre code)::after {
+  content: none;
+}
+
+.message-markdown code:not(pre code) {
+  @apply rounded bg-zinc-200/70 px-1.5 py-0.5 text-[0.85em] font-mono text-zinc-800;
+}
+
+/* Thin scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(212 212 216) transparent;
+}
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+*::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-zinc-300;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
