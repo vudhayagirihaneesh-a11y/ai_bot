@@ -58,7 +58,7 @@ export async function addDocument(
     throw new Error("Supabase insert failed: " + docError.message);
   }
 
-  // 2. Insert chunks
+  // 2. Insert chunks in batches to avoid Supabase statement timeouts
   const rows = chunks.map((ch) => ({
     id: ch.id,
     doc_id: ch.docId,
@@ -69,11 +69,15 @@ export async function addDocument(
     embedding: ch.vector, // Supabase pgvector accepts JS arrays directly
   }));
 
-  const { error: chunkError } = await supabase.from("document_chunks").insert(rows);
+  const BATCH_SIZE = 100;
+  for (let i = 0; i < rows.length; i += BATCH_SIZE) {
+    const batch = rows.slice(i, i + BATCH_SIZE);
+    const { error: chunkError } = await supabase.from("document_chunks").insert(batch);
 
-  if (chunkError) {
-    console.error("Failed to insert document chunks:", chunkError);
-    throw new Error("Supabase insert failed: " + chunkError.message);
+    if (chunkError) {
+      console.error(`Failed to insert document chunks (batch ${i}):`, chunkError);
+      throw new Error("Supabase insert failed: " + chunkError.message);
+    }
   }
 }
 
