@@ -20,7 +20,7 @@ export async function retrieve(
 ): Promise<RetrieveResult> {
   const queryVector = await embedText(question);
 
-  const candidates = search(queryVector, {
+  const candidates = await search(queryVector, {
     topK: env.retrieval.topK,
     docIds,
     threshold: 0,
