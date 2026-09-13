@@ -111,17 +111,10 @@ export async function POST(req: Request): Promise<Response> {
         const chunks: CtxChunk[] =
           webChunks.length > 0 ? webChunks : kbChunks;
 
-        if (chunks.length === 0) {
-          send({ type: "citations", citations: [], usedContext: false });
-          send({ type: "done", messageId: uid() });
-          readableController.close();
-          return;
-        }
-
         send({
           type: "citations",
           citations: buildRetrievedContext(chunks).citations,
-          usedContext: true,
+          usedContext: chunks.length > 0,
         });
 
         // 2. Prompt construction
@@ -130,17 +123,20 @@ export async function POST(req: Request): Promise<Response> {
           .slice(-env.retrieval.historyWindow)
           .map((m) => ({ role: m.role, content: m.content }));
 
-        const today = new Date().toLocaleDateString("en-US", {
+        const now = new Date().toLocaleString("en-US", {
           weekday: "long",
           year: "numeric",
           month: "long",
           day: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+          timeZoneName: "short"
         });
 
         const messages: OllamaChatMessage[] = [
           {
             role: "system",
-            content: `Today is ${today}. The server provides this date, so never claim you lack access to the current date or time. When asked for today's date, day, or time, answer with the date directly and do not mention the knowledge base, context, or sources for it.\n\n${withContext(
+            content: `The current date and time is ${now}. The server provides this exact time, so never claim you lack access to the current date or time. When asked for today's date, day, or time, answer with the date/time directly and do not mention the knowledge base, context, or sources for it.\n\n${withContext(
               SYSTEM_PROMPT,
               context.contextBlock
             )}`,
