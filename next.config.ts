@@ -11,6 +11,9 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: "25mb",
     },
+    outputFileTracingIncludes: {
+      "/api/**/*": ["./node_modules/pdfjs-dist/legacy/build/pdf.worker.mjs"],
+    },
   },
 };
 
