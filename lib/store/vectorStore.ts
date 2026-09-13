@@ -104,6 +104,8 @@ export async function listDocuments(): Promise<DocumentInfo[]> {
     name: d.name,
     chunks: d.document_chunks[0].count,
     createdAt: new Date(d.created_at).getTime(),
+    size: 0,
+    pages: null,
   }));
 }
 
