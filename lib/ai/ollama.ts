@@ -5,6 +5,14 @@ import { env } from "@/lib/env";
  * Covers: health check, batch embeddings, streaming chat generation.
  */
 
+/**
+ * Common headers for all Ollama requests. Includes the ngrok header
+ * to bypass the free-tier interstitial warning page when tunnelling.
+ */
+const ollamaHeaders: Record<string, string> = {
+  "ngrok-skip-browser-warning": "true",
+};
+
 export interface OllamaChatMessage {
   role: "system" | "user" | "assistant";
   content: string;
@@ -19,6 +27,7 @@ export interface OllamaTag {
 export async function ollamaAlive(timeoutMs = 8000): Promise<boolean> {
   try {
     const res = await fetch(`${env.ollama.baseUrl}/api/tags`, {
+      headers: ollamaHeaders,
       signal: AbortSignal.timeout(timeoutMs),
     });
     return res.ok;
@@ -30,6 +39,7 @@ export async function ollamaAlive(timeoutMs = 8000): Promise<boolean> {
 export async function ollamaTags(): Promise<string[]> {
   try {
     const res = await fetch(`${env.ollama.baseUrl}/api/tags`, {
+      headers: ollamaHeaders,
       signal: AbortSignal.timeout(5000),
     });
     if (!res.ok) return [];
@@ -57,7 +67,7 @@ export async function embedTexts(
   if (texts.length === 0) return [];
   const res = await fetch(`${env.ollama.baseUrl}/api/embed`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...ollamaHeaders },
     body: JSON.stringify({
       model: env.ollama.embedModel,
       input: texts,
@@ -106,7 +116,7 @@ export async function* streamChat(
 ): AsyncGenerator<string> {
   const res = await fetch(`${env.ollama.baseUrl}/api/chat`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...ollamaHeaders },
     body: JSON.stringify({
       model: env.ollama.chatModel,
       messages: opts.messages,
@@ -179,7 +189,7 @@ export async function chatCompletion(
 ): Promise<string> {
   const res = await fetch(`${env.ollama.baseUrl}/api/chat`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...ollamaHeaders },
     body: JSON.stringify({
       model: env.ollama.chatModel,
       messages,

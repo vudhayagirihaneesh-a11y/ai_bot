@@ -22,3 +22,4 @@ pulls_done.marker
 npm-debug.log*
 .env_check.txt
 listing.txt
+.vercel
