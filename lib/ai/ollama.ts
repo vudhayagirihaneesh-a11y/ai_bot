@@ -16,7 +16,7 @@ export interface OllamaTag {
 
 // ── Health ────────────────────────────────────────────────────────────────────
 
-export async function ollamaAlive(timeoutMs = 3000): Promise<boolean> {
+export async function ollamaAlive(timeoutMs = 8000): Promise<boolean> {
   try {
     const res = await fetch(`${env.ollama.baseUrl}/api/tags`, {
       signal: AbortSignal.timeout(timeoutMs),

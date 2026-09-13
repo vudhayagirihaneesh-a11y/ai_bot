@@ -14,6 +14,9 @@ function num(value: string | undefined, fallback: number): number {
   return Number.isFinite(n) ? n : fallback;
 }
 
+/** True when running inside a Vercel serverless function. */
+export const isVercel = !!process.env.VERCEL;
+
 export const env = {
   ollama: {
     baseUrl: process.env.OLLAMA_BASE_URL || "http://localhost:11434",
@@ -21,9 +24,13 @@ export const env = {
     embedModel: process.env.OLLAMA_EMBED_MODEL || "nomic-embed-text",
   },
   store: {
+    // On Vercel the project root is read-only — only /tmp is writable.
     vectorPath:
-      process.env.VECTOR_STORE_PATH || "./data/vector_index.json",
-    uploadDir: process.env.UPLOAD_DIR || "./data/uploads",
+      process.env.VECTOR_STORE_PATH ||
+      (isVercel ? "/tmp/vector_index.json" : "./data/vector_index.json"),
+    uploadDir:
+      process.env.UPLOAD_DIR ||
+      (isVercel ? "/tmp/uploads" : "./data/uploads"),
   },
   chunk: {
     sizeChars: int(process.env.CHUNK_SIZE_CHARS, 2400),

@@ -130,9 +130,9 @@ export function Sidebar(props: SidebarProps) {
                 Ollama ready · {health.ollama.chatModel}
               </span>
             ) : (
-              <span>
+              <span className="truncate">
                 {!health.ollama.alive
-                  ? "Ollama offline"
+                  ? "Ollama offline — check server connection"
                   : !health.ollama.chatModelReady
                     ? "Chat model missing"
                     : "Embed model missing"}

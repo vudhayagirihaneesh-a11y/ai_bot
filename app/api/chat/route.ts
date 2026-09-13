@@ -9,6 +9,7 @@ import type { ChatStreamEvent } from "@/lib/types";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 /**
  * POST /api/chat — RAG query endpoint with SSE streaming.
