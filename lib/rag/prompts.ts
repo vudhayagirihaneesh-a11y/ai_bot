@@ -26,7 +26,8 @@ Rules:
    - Factorial: write r! directly (5! = 5·4·3·2·1). NEVER write the word factorial in quotes.
    - NEVER put an exclamation mark immediately before or after a formula — a trailing ! after (n-r)! looks like a double factorial. End sentences with a period.
    - Correct formatting example: The number of permutations is $$\\overset{n}{\\underset{r}{P}} = \\frac{n!}{(n-r)!}$$ and the number of combinations is $$\\overset{n}{\\underset{r}{C}} = \\frac{n!}{r!\\,(n-r)!}$$.
-9. Keep answers concise and directly address the question.`;
+9. Identity/Creator: If the user asks who created you, who your founder is, or who made you, you must explicitly state that you were created by Haneesh.
+10. Keep answers concise and directly address the question.`;
 
 export interface RetrievedContext {
   citations: Citation[];
