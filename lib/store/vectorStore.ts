@@ -49,7 +49,7 @@ export async function addDocument(
   // 1. Insert document metadata
   const { error: docError } = await supabase.from("documents").insert({
     id: doc.id,
-    name: doc.name,
+    name: doc.name.replace(/\0/g, ""),
     created_at: new Date(doc.createdAt).toISOString(),
   });
 
@@ -62,10 +62,10 @@ export async function addDocument(
   const rows = chunks.map((ch) => ({
     id: ch.id,
     doc_id: ch.docId,
-    doc_name: ch.docName,
+    doc_name: ch.docName.replace(/\0/g, ""),
     page: ch.page,
     chunk_index: ch.chunkIndex,
-    text: ch.text,
+    text: ch.text.replace(/\0/g, ""),
     embedding: ch.vector, // Supabase pgvector accepts JS arrays directly
   }));
 
