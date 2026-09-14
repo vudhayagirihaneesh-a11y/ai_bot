@@ -21,13 +21,15 @@
   --color-brand-900: oklch(0.3 0.09 250);
 }
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 html,
 body {
   height: 100%;
 }
 
 body {
-  @apply bg-zinc-50 text-zinc-900 antialiased;
+  @apply bg-zinc-50 text-zinc-900 antialiased dark:bg-zinc-950 dark:text-zinc-50;
 }
 
 /* ── Streaming caret for in-flight assistant answers ────────────────────── */
@@ -68,7 +70,7 @@ body {
 }
 
 .message-markdown code:not(pre code) {
-  @apply rounded bg-zinc-200/70 px-1.5 py-0.5 text-[0.85em] font-mono text-zinc-800;
+  @apply rounded bg-zinc-200/70 dark:bg-zinc-800/80 px-1.5 py-0.5 text-[0.85em] font-mono text-zinc-800 dark:text-zinc-200;
 }
 
 /* Thin scrollbars */
@@ -76,12 +78,15 @@ body {
   scrollbar-width: thin;
   scrollbar-color: rgb(212 212 216) transparent;
 }
+.dark * {
+  scrollbar-color: rgb(82 82 91) transparent;
+}
 *::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 *::-webkit-scrollbar-thumb {
-  @apply rounded-full bg-zinc-300;
+  @apply rounded-full bg-zinc-300 dark:bg-zinc-700;
 }
 *::-webkit-scrollbar-track {
   background: transparent;

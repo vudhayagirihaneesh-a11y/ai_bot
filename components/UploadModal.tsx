@@ -45,14 +45,14 @@ export function UploadModal({ open, onClose, onDocumentAdded }: UploadModalProps
       onClick={onClose}
     >
       <div
-        className="flex max-h-[85vh] w-full max-w-xl flex-col overflow-hidden rounded-xl bg-white shadow-2xl"
+        className="flex max-h-[85vh] w-full max-w-xl flex-col overflow-hidden rounded-xl bg-white dark:bg-zinc-900 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-zinc-200 px-5 py-4">
+        <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 px-5 py-4">
           <div>
-            <h2 className="text-base font-semibold">Knowledge Base</h2>
-            <p className="text-xs text-zinc-500">
+            <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">Knowledge Base</h2>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400">
               Upload documents (PDF, DOCX, TXT, MD) — max 25 MB each
             </p>
           </div>
@@ -70,8 +70,8 @@ export function UploadModal({ open, onClose, onDocumentAdded }: UploadModalProps
             className={cn(
               "flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-6 py-10 text-center transition-colors",
               dragOver
-                ? "border-brand-500 bg-brand-50"
-                : "border-zinc-300 bg-zinc-50 hover:border-brand-400"
+                ? "border-brand-500 bg-brand-50 dark:bg-brand-900/30"
+                : "border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 hover:border-brand-400 dark:hover:border-brand-600"
             )}
             onDragOver={(e) => {
               e.preventDefault();
@@ -91,9 +91,9 @@ export function UploadModal({ open, onClose, onDocumentAdded }: UploadModalProps
             }}
           >
             <UploadCloud className="h-10 w-10 text-brand-500" />
-            <p className="text-sm font-medium">
+            <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
               Drag & drop files here, or{" "}
-              <span className="text-brand-600 underline">browse</span>
+              <span className="text-brand-600 dark:text-brand-400 underline">browse</span>
             </p>
             <p className="text-xs text-zinc-400">{ALLOWED.join(" · ")}</p>
             <input
@@ -113,7 +113,7 @@ export function UploadModal({ open, onClose, onDocumentAdded }: UploadModalProps
         <UploadList uploads={uploads} onClearFinished={clearFinished} />
 
         {/* Footer */}
-        <div className="flex items-center justify-between border-t border-zinc-200 px-5 py-3.5">
+        <div className="flex items-center justify-between border-t border-zinc-200 dark:border-zinc-800 px-5 py-3.5">
           <p className="text-[11px] text-zinc-400">
             {isUploading
               ? "Processing… documents are embedded locally via Ollama."

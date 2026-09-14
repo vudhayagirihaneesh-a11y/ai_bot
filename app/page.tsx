@@ -9,6 +9,7 @@ import { useChatStream, type ChatStage } from "@/hooks/useChatStream";
 import { ChatBubble } from "@/components/ChatBubble";
 import { Sidebar } from "@/components/Sidebar";
 import { EmptyState } from "@/components/EmptyState";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 /**
  * Chat surface: message list with streaming assistant answers, stop
@@ -179,7 +180,7 @@ export default function ChatPage() {
       {/* Mobile backdrop */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-30 bg-zinc-900/40 lg:hidden"
+          className="fixed inset-0 z-30 bg-zinc-900/40 dark:bg-zinc-900/60 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -214,25 +215,28 @@ export default function ChatPage() {
       </div>
 
       {/* Main column */}
-      <main className="flex min-w-0 flex-1 flex-col">
+      <main className="flex min-w-0 flex-1 flex-col bg-white dark:bg-zinc-900">
         {/* Top bar */}
-        <header className="flex items-center gap-3 border-b border-zinc-200 bg-white px-4 py-3">
+        <header className="flex items-center gap-3 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-4 py-3">
           <button
             onClick={() => setSidebarOpen((o) => !o)}
-            className="rounded-lg p-1.5 text-zinc-500 hover:bg-zinc-100"
+            className="rounded-lg p-1.5 text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800"
             aria-label="Toggle sidebar"
           >
             <Menu className="h-5 w-5" />
           </button>
           <div className="flex items-center gap-2">
             <Bot className="h-5 w-5 text-brand-600" />
-            <h1 className="text-sm font-semibold">
+            <h1 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
               Maths AI
             </h1>
           </div>
-          <div className="ml-auto flex items-center gap-1.5 rounded-full bg-zinc-100 px-3 py-1 text-[11px] text-zinc-500">
-            <Database className="h-3 w-3" />
-            Connected
+          <div className="ml-auto flex items-center gap-2">
+            <div className="flex items-center gap-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 px-3 py-1 text-[11px] text-zinc-500 dark:text-zinc-400">
+              <Database className="h-3 w-3" />
+              Connected
+            </div>
+            <ThemeToggle />
           </div>
         </header>
 
@@ -251,14 +255,14 @@ export default function ChatPage() {
         </div>
 
         {/* Input */}
-        <div className="border-t border-zinc-200 bg-white px-4 py-4">
+        <div className="border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-4 py-4">
           {stream.isStreaming && stage !== "idle" && (
             <div className="mx-auto mb-2 flex max-w-3xl items-center justify-center">
               <div
                 className={
                   stage === "searching_web"
-                    ? "flex items-center gap-1.5 rounded-full bg-sky-100 px-3 py-1 text-[11px] font-medium text-sky-700"
-                    : "flex items-center gap-1.5 rounded-full bg-zinc-100 px-3 py-1 text-[11px] text-zinc-500"
+                    ? "flex items-center gap-1.5 rounded-full bg-sky-100 dark:bg-sky-900/30 px-3 py-1 text-[11px] font-medium text-sky-700 dark:text-sky-300"
+                    : "flex items-center gap-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 px-3 py-1 text-[11px] text-zinc-500 dark:text-zinc-400"
                 }
               >
                 {stage === "searching" && (
@@ -285,7 +289,7 @@ export default function ChatPage() {
               onKeyDown={handleKeyDown}
               placeholder="Ask anything…"
               rows={1}
-              className="max-h-[200px] flex-1 resize-none rounded-xl border border-zinc-300 px-4 py-3 text-sm outline-none transition-colors focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+              className="max-h-[200px] flex-1 resize-none rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 py-3 text-sm text-zinc-900 dark:text-zinc-100 outline-none transition-colors focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:focus:ring-brand-900/30"
             />
             {stream.isStreaming ? (
               <button
@@ -306,7 +310,7 @@ export default function ChatPage() {
               </button>
             )}
           </div>
-          <p className="mx-auto mt-2 max-w-3xl text-center text-[10px] text-zinc-400">
+          <p className="mx-auto mt-2 max-w-3xl text-center text-[10px] text-zinc-400 dark:text-zinc-500">
             Enter to send · Shift+Enter for a new line.
           </p>
         </div>

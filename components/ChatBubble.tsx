@@ -33,7 +33,7 @@ function ChatBubbleImpl({ message }: { message: ChatMessage }) {
           "max-w-[85%] rounded-2xl px-4 py-3 shadow-sm sm:max-w-[75%]",
           isUser
             ? "rounded-br-md bg-brand-600 text-white"
-            : "rounded-bl-md border border-zinc-200 bg-white"
+            : "rounded-bl-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800"
         )}
       >
         {isUser ? (
@@ -51,7 +51,7 @@ function ChatBubbleImpl({ message }: { message: ChatMessage }) {
             {message.content ? (
               <MarkdownContent content={message.content} />
             ) : message.pending ? (
-              <p className="text-sm text-zinc-400 streaming-caret">
+              <p className="text-sm text-zinc-400 dark:text-zinc-500 streaming-caret">
                 {message.citations && message.citations.length > 0
                   ? "Found relevant sources. Generating answer…"
                   : "Searching the knowledge base…"}
@@ -70,7 +70,7 @@ function ChatBubbleImpl({ message }: { message: ChatMessage }) {
         <p
           className={cn(
             "mt-1.5 text-[10px]",
-            isUser ? "text-brand-200" : "text-zinc-400"
+            isUser ? "text-brand-200" : "text-zinc-400 dark:text-zinc-500"
           )}
         >
           {formatTime(message.createdAt)}
@@ -78,7 +78,7 @@ function ChatBubbleImpl({ message }: { message: ChatMessage }) {
       </div>
 
       {isUser && (
-        <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-200 text-zinc-600">
+        <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-200 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300">
           <User className="h-4.5 w-4.5" />
         </div>
       )}

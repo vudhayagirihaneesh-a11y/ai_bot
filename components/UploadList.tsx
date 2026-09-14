@@ -37,14 +37,14 @@ export function UploadList({
   if (uploads.length === 0) return null;
 
   return (
-    <div className="flex-1 overflow-y-auto border-t border-zinc-200 px-5 py-4">
+    <div className="flex-1 overflow-y-auto border-t border-zinc-200 dark:border-zinc-800 px-5 py-4">
       <div className="mb-3 flex items-center justify-between">
         <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-400">
           Uploads
         </h3>
         <button
           onClick={onClearFinished}
-          className="text-xs text-zinc-400 hover:text-zinc-600"
+          className="text-xs text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
         >
           Clear finished
         </button>
@@ -53,7 +53,7 @@ export function UploadList({
         {uploads.map((u, i) => (
           <div
             key={`${u.file.name}-${i}`}
-            className="rounded-lg border border-zinc-200 p-3"
+            className="rounded-lg border border-zinc-200 dark:border-zinc-800 p-3"
           >
             <div className="flex items-center gap-2.5">
               {u.stage === "done" ? (
@@ -65,7 +65,7 @@ export function UploadList({
               )}
               <FileText className="h-4 w-4 shrink-0 text-zinc-400" />
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium">{u.file.name}</p>
+                <p className="truncate text-sm font-medium text-zinc-900 dark:text-zinc-100">{u.file.name}</p>
                 <p className="text-[11px] text-zinc-400">
                   {formatBytes(u.file.size)}
                 </p>
@@ -74,10 +74,10 @@ export function UploadList({
                 className={cn(
                   "shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium",
                   u.stage === "done"
-                    ? "bg-emerald-100 text-emerald-700"
+                    ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300"
                     : u.stage === "error"
-                      ? "bg-red-100 text-red-700"
-                      : "bg-brand-100 text-brand-700"
+                      ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300"
+                      : "bg-brand-100 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300"
                 )}
               >
                 {STAGE_LABELS[u.stage]}
@@ -86,7 +86,7 @@ export function UploadList({
             </div>
 
             {(u.stage === "embedding" || u.stage === "saving") && (
-              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-zinc-100">
+              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800">
                 <div
                   className="h-full rounded-full bg-brand-500 transition-all duration-300"
                   style={{ width: `${Math.round(u.progress * 100)}%` }}
@@ -95,7 +95,7 @@ export function UploadList({
             )}
 
             {u.error && (
-              <p className="mt-2 rounded-md bg-red-50 px-2.5 py-1.5 text-xs text-red-700">
+              <p className="mt-2 rounded-md bg-red-50 dark:bg-red-900/30 px-2.5 py-1.5 text-xs text-red-700 dark:text-red-300">
                 {u.error}
               </p>
             )}

@@ -18,7 +18,7 @@ import rehypeKatex from "rehype-katex";
  */
 function MarkdownContentImpl({ content }: { content: string }) {
   return (
-    <div className="message-markdown prose prose-sm prose-zinc max-w-none prose-p:my-2 prose-pre:my-3 prose-ul:my-2 prose-ol:my-2 prose-li:my-0.5 prose-headings:font-semibold prose-a:text-brand-600 prose-table:my-3 prose-th:bg-zinc-100 prose-th:px-3 prose-th:py-1.5 prose-td:px-3 prose-td:py-1.5 prose-td:border-t prose-td:border-zinc-200">
+    <div className="message-markdown prose prose-sm prose-zinc dark:prose-invert max-w-none prose-p:my-2 prose-pre:my-3 prose-ul:my-2 prose-ol:my-2 prose-li:my-0.5 prose-headings:font-semibold prose-a:text-brand-600 dark:prose-a:text-brand-400 prose-table:my-3 prose-th:bg-zinc-100 dark:prose-th:bg-zinc-800 prose-th:px-3 prose-th:py-1.5 prose-td:px-3 prose-td:py-1.5 prose-td:border-t prose-td:border-zinc-200 dark:prose-td:border-zinc-700">
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkMath]}
         rehypePlugins={[
