@@ -99,18 +99,8 @@ export function Sidebar(props: SidebarProps) {
           onDelete={props.onDelete}
         />
 
-        <KnowledgeBaseSection
-          documents={props.documents}
-          onUploadClick={() => setUploadOpen(true)}
-          onDeleteDocument={deleteDocument}
-        />
       </aside>
 
-      <UploadModal
-        open={uploadOpen}
-        onClose={() => setUploadOpen(false)}
-        onDocumentAdded={props.onDocumentAdded}
-      />
     </>
   );
 }
